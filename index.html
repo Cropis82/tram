@@ -4,133 +4,152 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Neon AI Translator</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+
     <style>
         /* --- RESET E BASE --- */
         * { box-sizing: border-box; }
+        
         body {
-            font-family: 'Courier New', Courier, monospace; /* Font più "tecnico" */
+            /* Usiamo il font Share Tech Mono importato */
+            font-family: 'Share Tech Mono', monospace;
             margin: 0;
             padding: 0;
             height: 100vh;
             width: 100vw;
-            overflow: hidden; /* Niente scroll */
+            overflow: hidden;
             display: flex;
             flex-direction: column;
+            background-color: #000; /* Fallback nero */
         }
 
         /* --- PARTE SUPERIORE: RICHIESTA (70vh) --- */
         .request-section {
             height: 70vh;
-            background-color: #000;
+            background-color: #050505; /* Nero quasi assoluto */
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             position: relative;
-            z-index: 1; /* Sta sotto l'ombra della risposta */
+            z-index: 1; 
         }
 
         /* Tendina Lingua */
         .lang-select {
             background: transparent;
-            color: #fff;
-            border: none;
-            font-size: 2rem; /* Grande */
+            color: #ccc;
+            border: 1px solid transparent;
+            font-family: 'Orbitron', sans-serif; /* Font Titoli */
+            font-size: 1.5rem;
             text-align: center;
             cursor: pointer;
             outline: none;
             margin-bottom: 2rem;
-            opacity: 0.7;
-            transition: opacity 0.3s, text-shadow 0.3s;
-            appearance: none; /* Rimuove lo stile standard del browser */
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: all 0.3s;
+            appearance: none;
             -webkit-appearance: none;
         }
 
         .lang-select:hover, .lang-select:focus {
-            opacity: 1;
-            text-shadow: 0 0 15px rgba(255, 255, 0, 0.8); /* Neon Giallo */
+            color: #fff;
+            text-shadow: 0 0 15px rgba(255, 255, 0, 0.8);
         }
 
-        /* Contenitore Input centrale */
+        /* Contenitore Input */
         .input-wrapper {
             position: relative;
-            width: 80%;
+            width: 90%;
             max-width: 800px;
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
-        /* Casella di testo Input */
+        /* Input Casella */
         .main-input {
             width: 100%;
             background: transparent;
             border: none;
             border-bottom: 2px solid #333;
             color: #fff;
-            font-size: 3.5rem; /* Molto grande */
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 3rem; /* Adatta la dimensione */
             text-align: center;
             padding: 10px;
             outline: none;
-            font-weight: bold;
+            text-transform: uppercase;
             transition: all 0.3s ease;
         }
 
         .main-input::placeholder {
-            color: #444;
+            color: #333;
+            font-size: 2rem;
         }
 
-        /* Effetto Neon attivo quando si scrive */
         .main-input:focus {
             border-bottom-color: #ffff00;
             text-shadow: 0 0 20px rgba(255, 255, 0, 0.6);
-            box-shadow: 0 20px 20px -20px rgba(255, 255, 0, 0.4); /* Ombra gialla sotto */
+            /* Usiamo un drop-shadow filter che a volte funziona meglio del box-shadow */
+            filter: drop-shadow(0 10px 10px rgba(255, 255, 0, 0.2));
         }
 
-        /* Pulsante conferma piccolino */
+        /* Pulsante */
         .submit-btn {
             background: transparent;
-            border: 1px solid #555;
-            color: #555;
-            font-size: 1.5rem;
-            width: 50px;
-            height: 50px;
+            border: 1px solid #444;
+            color: #666;
+            font-size: 1.2rem;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
-            margin-left: 20px;
+            margin-left: 15px;
             cursor: pointer;
             transition: all 0.3s;
             display: flex;
             align-items: center;
             justify-content: center;
+            font-family: 'Orbitron', sans-serif;
         }
 
         .submit-btn:hover {
             border-color: #ffff00;
             color: #ffff00;
-            box-shadow: 0 0 15px rgba(255, 255, 0, 0.5);
-        }
-
-        .submit-btn:disabled {
-            opacity: 0.3;
-            cursor: not-allowed;
+            box-shadow: 0 0 15px rgba(255, 255, 0, 0.8);
         }
 
         /* --- PARTE INFERIORE: RISPOSTA (30vh) --- */
         .response-section {
-            height: 30vh; /* Restante spazio */
-            background-color: #4a0000; /* Rosso Scuro base */
+            height: 30vh;
+            /* Background rosso scuro solido come base */
+            background-color: #380000;
             
-            /* Pattern Esagonale via SVG (incluso nel CSS) */
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='49' viewBox='0 0 28 49'%3E%3Cg fill-rule='evenodd'%3E%3Cg id='hexagons' fill='%23600a0a' fill-opacity='1' fill-rule='nonzero'%3E%3Cpath d='M13.99 9.25l13 7.5v15l-13 7.5L1 31.75v-15l12.99-7.5zM3 17.9v12.7l10.99 6.34 11-6.35V17.9l-11-6.34L3 17.9zM0 15l12.98-7.5V0h-2v6.35L0 12.69v2.3zm0 18.5L12.98 41v8h-2v-6.85L0 35.81v-2.3zM15 0v7.5L27.99 15H28v-2.31h-.01L17 6.35V0h-2zm0 49v-8l12.99-7.5H28v2.31h-.01L17 42.15V49h-2z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            /* Pattern Esagonale Migliorato: Colore definito esplicitamente nel SVG (%23 è #) */
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='49' viewBox='0 0 28 49'%3E%3Cg fill-rule='evenodd'%3E%3Cg id='hexagons' fill='%23500000' fill-opacity='0.4' fill-rule='nonzero'%3E%3Cpath d='M13.99 9.25l13 7.5v15l-13 7.5L1 31.75v-15l12.99-7.5zM3 17.9v12.7l10.99 6.34 11-6.35V17.9l-11-6.34L3 17.9zM0 15l12.98-7.5V0h-2v6.35L0 12.69v2.3zm0 18.5L12.98 41v8h-2v-6.85L0 35.81v-2.3zM15 0v7.5L27.99 15H28v-2.31h-.01L17 6.35V0h-2zm0 49v-8l12.99-7.5H28v2.31h-.01L17 42.15V49h-2z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
             
             display: flex;
             flex-direction: row;
             position: relative;
-            z-index: 10; /* Sta sopra la parte nera */
+            z-index: 10;
             
-            /* Ombra Gialla che sporge verso l'alto (Bordo Neon) */
-            box-shadow: 0 -4px 25px rgba(255, 255, 0, 0.6);
-            border-top: 2px solid rgba(255, 255, 0, 0.3);
+            /* NEON GLOW: Usiamo sia border-top che box-shadow */
+            border-top: 2px solid #ffff00;
+            box-shadow: 0 -10px 40px rgba(255, 220, 0, 0.4);
+        }
+
+        /* Hack per forzare la visualizzazione del background in alcuni browser */
+        .response-section::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: inherit;
+            z-index: -1;
+            filter: brightness(0.8); /* Scurisce leggermente per sicurezza */
         }
 
         .output-col {
@@ -140,70 +159,74 @@
             flex-direction: column;
             justify-content: center;
             color: #fff;
+            position: relative; /* Per z-index */
+            z-index: 2;
         }
 
-        /* Colonna sinistra: Traduzione */
         .trans-col {
-            border-right: 1px solid rgba(255,255,255,0.1);
-            align-items: flex-end; /* Testo allineato a destra verso il centro */
+            border-right: 1px solid rgba(255, 255, 0, 0.1);
+            align-items: flex-end;
             text-align: right;
         }
 
-        /* Colonna destra: Definizione */
         .def-col {
             align-items: flex-start;
             text-align: left;
         }
 
         .translation-text {
-            font-size: 2.5rem; /* Grande */
-            font-weight: bold;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-            font-family: 'Segoe UI', sans-serif; /* Più pulito per la lettura */
+            font-family: 'Orbitron', sans-serif; /* Font Cyberpunk */
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-shadow: 2px 2px 0px #000;
+            color: #fff;
         }
 
         .definition-text {
-            font-size: 1rem; /* Normale */
-            line-height: 1.4;
-            opacity: 0.9;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 1.1rem;
+            line-height: 1.5;
+            color: #ffcccc;
             max-width: 90%;
-            font-family: 'Segoe UI', sans-serif;
         }
 
         .label {
+            font-family: 'Orbitron', sans-serif;
             font-size: 0.7rem;
             text-transform: uppercase;
             letter-spacing: 2px;
-            color: #ffcccc;
-            margin-bottom: 5px;
+            color: #ffff00; /* Etichetta gialla */
+            margin-bottom: 8px;
+            opacity: 0.8;
         }
 
         .loading-pulse {
-            animation: pulse 1.5s infinite;
+            animation: pulse 1s infinite alternate;
         }
 
         @keyframes pulse {
-            0% { opacity: 0.5; }
-            50% { opacity: 1; text-shadow: 0 0 10px white; }
-            100% { opacity: 0.5; }
+            from { opacity: 0.6; text-shadow: 0 0 5px #fff; }
+            to { opacity: 1; text-shadow: 0 0 20px #ffff00; }
         }
 
-        /* Adattamento Mobile */
+        /* Mobile */
         @media (max-width: 768px) {
             .response-section {
                 flex-direction: column;
                 height: auto;
-                min-height: 30vh;
+                min-height: 35vh;
             }
             .trans-col {
                 border-right: none;
-                border-bottom: 1px solid rgba(255,255,255,0.1);
+                border-bottom: 1px solid rgba(255,255,0,0.1);
                 align-items: center;
                 text-align: center;
+                padding-bottom: 1rem;
             }
             .def-col {
                 align-items: center;
                 text-align: center;
+                padding-top: 1rem;
             }
             .main-input {
                 font-size: 2rem;
@@ -216,7 +239,8 @@
     <div class="request-section">
         
         <select id="languageSelect" class="lang-select">
-            <option value="English">English</option> <option value="Italian">Italian</option>
+            <option value="English">English</option>
+            <option value="Italian">Italian</option>
             <option value="Spanish">Spanish</option>
             <option value="Swedish">Swedish</option>
             <option value="French">French</option>
@@ -229,33 +253,30 @@
         </select>
 
         <div class="input-wrapper">
-            <input type="text" id="wordInput" class="main-input" placeholder="TYPE HERE" autocomplete="off">
-            <button id="submitBtn" class="submit-btn" onclick="analyzeWord()">&#10003;</button>
+            <input type="text" id="wordInput" class="main-input" placeholder="INSERT DATA" autocomplete="off">
+            <button id="submitBtn" class="submit-btn" onclick="analyzeWord()">&#10148;</button>
         </div>
     </div>
 
     <div class="response-section">
         <div class="output-col trans-col">
-            <span class="label">Translation</span>
+            <span class="label">Target Output</span>
             <div id="translationOutput" class="translation-text">...</div>
         </div>
         <div class="output-col def-col">
-            <span class="label">Definition (EN)</span>
-            <div id="definitionOutput" class="definition-text">Waiting for input...</div>
+            <span class="label">Database Entry (EN)</span>
+            <div id="definitionOutput" class="definition-text">System Ready.</div>
         </div>
     </div>
 
     <script>
-        // --- LOGICA JAVASCRIPT (INVARIATA) ---
-
+        // --- JAVASCRIPT ---
         let apiKey = "";
 
         window.onload = function() {
-            apiKey = prompt("Enter your Google Gemini API Key to start:");
+            apiKey = prompt("Enter Google Gemini API Key:");
             if (!apiKey) {
-                alert("API Key required. Reload to enter.");
-                document.getElementById('submitBtn').disabled = true;
-                document.getElementById('wordInput').disabled = true;
+                document.getElementById('definitionOutput').innerText = "API KEY MISSING.";
             }
         };
 
@@ -268,11 +289,11 @@
 
             if (!word) return;
 
-            // UI Loading state
+            // UI Loading
             btn.disabled = true;
-            translationOut.innerText = "Analyzing...";
+            translationOut.innerText = "PROCESSING";
             translationOut.classList.add('loading-pulse');
-            definitionOut.innerText = "Searching database...";
+            definitionOut.innerText = "Accessing Neural Network...";
 
             // Prompt
             const promptText = `
@@ -290,7 +311,6 @@
             `;
 
             try {
-                // Modello Gemini 3 Flash Preview
                 const modelName = "gemini-3-flash-preview"; 
                 const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
 
@@ -316,8 +336,8 @@
 
             } catch (error) {
                 console.error("Error:", error);
-                translationOut.innerText = "Error";
-                definitionOut.innerText = error.message;
+                translationOut.innerText = "ERROR";
+                definitionOut.innerText = "Connection lost: " + error.message;
             } finally {
                 btn.disabled = false;
                 translationOut.classList.remove('loading-pulse');
